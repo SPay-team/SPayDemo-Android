@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <color name="main_green">#148F2B</color>
+    <color name="reversed_text_color">#FFFFFFFF</color>
+    <color name="main_text_color">#FF000000</color>
+    <color name="shadowed_background_color">#80000000</color>
+</resources>
