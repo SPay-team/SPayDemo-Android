@@ -2,13 +2,32 @@ package spaysdk.integrationexample
 
 import android.app.Application
 import spay.sdk.SPaySdkApp
+import spay.sdk.api.InitializationResult
 import spay.sdk.api.SPayHelperConfig
+import spay.sdk.api.SPaySdkInitConfig
 import spay.sdk.api.SPayStage
 
 class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
+
+        /**
+         * Конфиг для инициализации библиотеки SPaySdk
+         */
+        val sPaySdkInitConfig = SPaySdkInitConfig(
+            application = this,
+            enableBnpl = true,
+            stage = SPayStage.Prod,
+            helperConfig = SPayHelperConfig(
+                isHelperEnabled = true,
+                mutableListOf()
+            ),
+            resultViewNeeded = true,
+            enableLogging = false
+        ) { initializationResult: InitializationResult ->
+
+        }
 
         /**
          * Инициализация SPaySdk
@@ -18,15 +37,6 @@ class App : Application() {
          * isReadyForSPaySdk вернет false
          *
          */
-        SPaySdkApp.getInstance()
-            .initialize(
-                application = this,
-                enableBnpl = true,
-                stage = SPayStage.Prod,
-                helperConfig = SPayHelperConfig(
-                    isHelperEnabled = true,
-                    disabledHelpers = emptyList()
-                )
-            )
+        SPaySdkApp.getInstance().initialize(sPaySdkInitConfig)
     }
 }

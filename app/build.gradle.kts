@@ -49,7 +49,7 @@ dependencies {
      *
      * Имплементация SPaySdk
      */
-    implementation("ru.spaymentsplus.libraries:spaysdk:2.1.0")
+    implementation("ru.spaymentsplus.libraries:spaysdk:2.2.0")
 
 // =====================================================================================================================
 
@@ -60,8 +60,8 @@ dependencies {
      *
      * Имплементация SPaySdk и fingerprint из aar, а также всех необходимых транзитивных зависимостей
      */
-//    implementation(files("../libs/spaysdk-2.1.0.aar"))
-//    implementation(files("../libs/fingerprint-1.9.5.aar"))
+//    implementation(files("../libs/spaysdk-2.2.0.aar"))
+//    implementation(files("../libs/fingerprint-1.9.6.aar"))
 //
 //     Activity
 //    implementation("androidx.activity:activity-ktx:1.6.1")
