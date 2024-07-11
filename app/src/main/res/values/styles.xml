@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="ProgressStyle">
+        <item name="colorAccent">@color/main_green</item>
+    </style>
+</resources>
