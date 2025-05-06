@@ -9,4 +9,4 @@
 библиотека
 
 Актуальную версию библиотеки смотрите на
-портале https://developers.sber.ru/docs/ru/sberpay-sdk/androidsdk/version
+портале https://sdkpay.github.io/SberPaySdkAndroidDoc/

@@ -49,7 +49,7 @@ dependencies {
      *
      * Имплементация SPaySdk
      */
-    implementation("ru.spaymentsplus.libraries:spaysdk:2.2.0")
+    implementation("ru.spaymentsplus.libraries:spaysdk:2.6.2")
 
 // =====================================================================================================================
 

@@ -1,10 +1,10 @@
 package spaysdk.integrationexample
 
 import android.app.Application
+import android.util.Log
 import spay.sdk.SPaySdkApp
-import spay.sdk.api.InitializationResult
+import spay.sdk.SPaySdkInitConfig
 import spay.sdk.api.SPayHelperConfig
-import spay.sdk.api.SPaySdkInitConfig
 import spay.sdk.api.SPayStage
 
 class App : Application() {
@@ -16,18 +16,20 @@ class App : Application() {
          * Конфиг для инициализации библиотеки SPaySdk
          */
         val sPaySdkInitConfig = SPaySdkInitConfig(
-            application = this,
-            enableBnpl = true,
-            stage = SPayStage.Prod,
-            helperConfig = SPayHelperConfig(
-                isHelperEnabled = true,
-                mutableListOf()
-            ),
-            resultViewNeeded = true,
-            enableLogging = false
-        ) { initializationResult: InitializationResult ->
-
-        }
+                application = this,
+                enableBnpl = true,
+                stage = SPayStage.Prod,
+                helperConfig = SPayHelperConfig(
+                    isHelperEnabled = true,
+                    disabledHelpers = emptyList()
+                ),
+                resultViewNeeded = true,
+                enableLogging = false,
+                spasiboBonuses = true,
+                enableOutsideTouchCancelling = true,
+            ) { initializationResult ->
+                Log.i("Initialization_result_spay", "$initializationResult")
+            }
 
         /**
          * Инициализация SPaySdk

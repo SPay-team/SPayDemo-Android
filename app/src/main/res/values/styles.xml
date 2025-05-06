@@ -3,4 +3,11 @@
     <style name="ProgressStyle">
         <item name="colorAccent">@color/main_green</item>
     </style>
+    <style name="SPayStyle">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">60dp</item>
+        <item name="android:background">@drawable/green_button_shape</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:layout_margin">8dp</item>
+    </style>
 </resources>

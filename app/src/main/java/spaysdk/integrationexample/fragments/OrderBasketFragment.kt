@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.google.android.material.snackbar.Snackbar
 import spay.sdk.SPaySdkApp
@@ -17,7 +18,11 @@ class OrderBasketFragment : Fragment() {
     private var _binding: FragmentOrderBasketBinding? = null
     private val binding: FragmentOrderBasketBinding get() = _binding!!
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         _binding = FragmentOrderBasketBinding.inflate(layoutInflater)
         return _binding!!.root
     }
@@ -43,31 +48,113 @@ class OrderBasketFragment : Fragment() {
              * сохранением узнаваемой стилистики SPaySdk. После чего ее необходимо в обязательном порядке предоставить
              * на дизайн-ревью команде SPaySdk
              */
-            if (isReadyForSPaySdk) spbSpaysdk.visibility = View.VISIBLE
+            spayPayBtn.isVisible = isReadyForSPaySdk
+            spayPayByPartsOnlyBtn.isVisible = isReadyForSPaySdk
+            spayPayWithoutRefreshBtn.isVisible = isReadyForSPaySdk
+            spayPayWithBonuses.isVisible = isReadyForSPaySdk
+            spayNewPayBtn.isVisible = isReadyForSPaySdk
+            spayPayWithPaymentMethods.isVisible = isReadyForSPaySdk
 
             /**
              * По нажатию на кнопку необходимо вызвать метод для запуска сценария оплаты SPaySdk
              */
-            spbSpaysdk.setOnClickListener {
+            spayPayBtn.setOnClickListener {
                 SPaySdkApp.getInstance().payWithBankInvoiceId(
                     context = requireContext(),
-                    apiKey = API_KEY,
-                    merchantLogin = MERCHANT_LOGIN,
-                    bankInvoiceId = BANK_INVOICE_ID,
-                    orderNumber = ORDER_NUMBER,
+                    apiKey = getApiKey(),
+                    merchantLogin = getMerchantLogin(),
+                    bankInvoiceId = getBankInvoiceId(),
+                    orderNumber = getOrderNumber(),
                     appPackage = APP_PACKAGE,
                     language = LANGUAGE
                 ) { paymentResult ->
-                    processPaymentResult(paymentResult)
+                    processPaymentResult(paymentResult = paymentResult)
+                }
+            }
+
+            spayPayByPartsOnlyBtn.setOnClickListener {
+                SPaySdkApp.getInstance().payWithPartPay(
+                    context = requireContext(),
+                    apiKey = getApiKey(),
+                    merchantLogin = getMerchantLogin(),
+                    bankInvoiceId = getBankInvoiceId(),
+                    orderNumber = getOrderNumber(),
+                    appPackage = APP_PACKAGE,
+                    language = LANGUAGE
+                ) { paymentResult ->
+                    processPaymentResult(paymentResult = paymentResult)
+                }
+            }
+
+            spayPayWithoutRefreshBtn.setOnClickListener {
+                SPaySdkApp.getInstance().payWithoutRefresh(
+                    context = requireContext(),
+                    apiKey = getApiKey(),
+                    merchantLogin = getMerchantLogin(),
+                    bankInvoiceId = getBankInvoiceId(),
+                    orderNumber = getOrderNumber(),
+                    appPackage = APP_PACKAGE,
+                    language = LANGUAGE
+                ) { paymentResult ->
+                    processPaymentResult(paymentResult = paymentResult)
+                }
+            }
+
+            spayPayWithBonuses.setOnClickListener {
+                SPaySdkApp.getInstance().payWithBonuses(
+                    context = requireContext(),
+                    apiKey = getApiKey(),
+                    merchantLogin = getMerchantLogin(),
+                    bankInvoiceId = getBankInvoiceId(),
+                    orderNumber = getOrderNumber(),
+                    appPackage = APP_PACKAGE,
+                    language = LANGUAGE
+                ) { paymentResult ->
+                    processPaymentResult(paymentResult = paymentResult)
+                }
+            }
+
+            spayNewPayBtn.setOnClickListener {
+                SPaySdkApp.getInstance().payOnline(
+                    context = requireContext(),
+                    apiKey = getApiKey(),
+                    merchantLogin = getMerchantLogin(),
+                    bankInvoiceId = getBankInvoiceId(),
+                    orderNumber = getOrderNumber(),
+                    appPackage = APP_PACKAGE,
+                    language = LANGUAGE
+                ) { paymentResult ->
+                    processPaymentResult(paymentResult = paymentResult)
+                }
+            }
+
+            spayPayWithPaymentMethods.setOnClickListener {
+                SPaySdkApp.getInstance().payWithPaymentAccounts(
+                    context = requireContext(),
+                    apiKey = getApiKey(),
+                    merchantLogin = getMerchantLogin(),
+                    bankInvoiceId = getBankInvoiceId(),
+                    orderNumber = getOrderNumber(),
+                    appPackage = APP_PACKAGE,
+                    language = LANGUAGE
+                ) { paymentResult ->
+                    processPaymentResult(paymentResult = paymentResult)
                 }
             }
         }
     }
 
     /**
-     * По завершению работы SPaySdk будет получен коллбек с соответсвующим результатом работы библиотеки.
+     * По завершению работы одной из SDK будет получен коллбек с соответсвующим результатом работы библиотеки.
      */
-    private fun processPaymentResult(paymentResult: PaymentResult) {
+    private fun processPaymentResult(
+        paymentResult: PaymentResult? = null
+    ) {
+        if (paymentResult != null) processSpaySdkPayResult(paymentResult)
+    }
+
+    /** Обработать ответ от SPaySdk */
+    private fun processSpaySdkPayResult(paymentResult: PaymentResult) {
         when (paymentResult) {
             is PaymentResult.Cancel -> {
                 /** Обработка коллбека при мануальном закрытии шторки SPaySdk пользователем */
@@ -120,32 +207,49 @@ class OrderBasketFragment : Fragment() {
             MerchantError.SdkClosedByUser -> {
                 /* Nothing to do here */
             }
+
+            /** Ошибка при оплате с бонусами */
+            is MerchantError.PayWithBonusesError -> {
+                makeSnackbar(merchantError.description)
+            }
+
+            /** Оплата по связкам */
+            is MerchantError.PayWithBindingError -> {
+                makeSnackbar(merchantError.description)
+            }
+
             null -> {}
         }
     }
 
-    private fun makeSnackbar(message: String) = Snackbar.make(requireView(), message, Snackbar.LENGTH_SHORT).show()
+    private fun makeSnackbar(message: String) =
+        Snackbar.make(requireView(), message, Snackbar.LENGTH_SHORT).show()
+
+    //
+    //
+    // -------------------- Данные для заполнения при тестировании --------------------
+    //
+    //
+
+    /** Подставьте сюда свой apiKey, который вам выдали после регистрации, либо введите его в поле этого экрана вручную */
+    private fun getApiKey(): String = binding.etApiKey.text.toString()
+
+    /** Подставьте сюда свой merchantLogin, под которым вас зарегистрировали, либо введите его в поле этого экрана вручную */
+    private fun getMerchantLogin(): String = binding.etMerchantLogin.text.toString()
 
     /**
-     * Константы для заполнения при тестировании
+     * Подставьте сюда номер заказа(bankInvoiceId), полученный со стороны вашего бека после регистрации заказа,
+     * либо введите его в поле этого экрана вручную
      */
+    private fun getBankInvoiceId(): String = binding.etBankInvoiceId.text.toString()
+
+    /**
+     * Подставьте сюда номер заказа, под которым заказ проходит у вас в приложении.
+     * Этот параметр нужен для быстрого поиска проблемного заказа и эффективного разбора инцидентов
+     */
+    private fun getOrderNumber(): String = binding.etOrderNumber.text.toString()
+
     companion object {
-
-        /** Подставьте сюда свой apiKey, который вам выдали после регистрации */
-        private const val API_KEY = ""
-
-        /** Подставьте сюда свой merchantLogin, под которым вас зарегистрировали  */
-        private const val MERCHANT_LOGIN = ""
-
-        /** Подставьте сюда номер заказа(bankInvoiceId), полученный со стороны вашего бека после регистрации заказа */
-        private const val BANK_INVOICE_ID = ""
-
-        /**
-         * Подставьте сюда номер заказа, под которым заказ проходит у вас в приложении.
-         * Этот параметр нужен для быстрого поиска проблемного заказа и эффективного разбора инцидентов
-         */
-        private const val ORDER_NUMBER = ""
-
         /**
          * При интеграции в свое приложение необходимо подставить сюда пакет Вашего приложения,
          * либо [BuildConfig.APPLICATION_ID] Вашего приложения как показано здесь
