@@ -1,3 +1,5 @@
+import java.util.Properties
+
 pluginManagement {
     repositories {
         google()
@@ -5,6 +7,13 @@ pluginManagement {
         gradlePluginPortal()
     }
 }
+val localProperties = Properties().apply {
+    val localFile = File(rootDir, "local.properties")
+    if (localFile.exists()) {
+        load(localFile.inputStream())
+    }
+}
+
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
@@ -17,11 +26,11 @@ dependencyResolutionManagement {
          * Поместите сюда креды которые вам были выданы в пригласительном письме для доступа к maven репозиторию
          */
         maven {
-            name = "name"
-            url = uri("uri")
+            name = localProperties.getProperty("name")
+            url = uri(localProperties.getProperty("url"))
             credentials {
-                username = "username"
-                password = "password"
+                username = localProperties.getProperty("username")
+                password = localProperties.getProperty("password")
             }
         }
     }

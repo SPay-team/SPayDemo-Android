@@ -66,6 +66,52 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/et_bank_invoice_id" />
 
+    <EditText
+        android:id="@+id/et_binding_id"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:autofillHints=""
+        android:hint="Binding id"
+        android:inputType="text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/et_order_number" />
+
+    <EditText
+        android:id="@+id/et_phone_number"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:autofillHints=""
+        android:hint="Phone number"
+        android:inputType="text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/et_binding_id" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/spay_pay_with_nmt"
+        style="@style/SPayStyle"
+        android:text="Оплата по НМТ"
+        app:layout_constraintBottom_toTopOf="@id/spay_pay_with_bonuses"
+        app:layout_constraintEnd_toStartOf="@id/spay_pay_with_binding"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/et_phone_number"
+        app:layout_constraintVertical_bias="1"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/spay_pay_with_binding"
+        style="@style/SPayStyle"
+        android:text="Оплата по связке"
+        app:layout_constraintBottom_toTopOf="@id/spay_pay_with_payment_methods"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/spay_pay_with_nmt"
+        app:layout_constraintTop_toBottomOf="@id/et_phone_number"
+        app:layout_constraintVertical_bias="1"
+        app:layout_constraintVertical_chainStyle="packed" />
+
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/spay_pay_with_payment_methods"
         style="@style/SPayStyle"
@@ -73,7 +119,7 @@
         app:layout_constraintBottom_toTopOf="@id/spay_pay_by_parts_only_btn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/spay_pay_with_bonuses"
-        app:layout_constraintTop_toBottomOf="@id/et_order_number"
+        app:layout_constraintTop_toBottomOf="@id/spay_pay_with_binding"
         app:layout_constraintVertical_bias="1"
         app:layout_constraintVertical_chainStyle="packed" />
 
@@ -84,7 +130,7 @@
         app:layout_constraintBottom_toTopOf="@id/spay_pay_without_refresh_btn"
         app:layout_constraintEnd_toStartOf="@id/spay_pay_with_payment_methods"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/et_order_number"
+        app:layout_constraintTop_toBottomOf="@id/spay_pay_with_nmt"
         app:layout_constraintVertical_bias="1"
         app:layout_constraintVertical_chainStyle="packed" />
 
@@ -103,7 +149,7 @@
         style="@style/SPayStyle"
         android:text="Оплата без рефрешей"
 
-        app:layout_constraintBottom_toTopOf="@id/spay_pay_btn"
+        app:layout_constraintBottom_toTopOf="@id/spay_pay_with_bank_invoice_id"
         app:layout_constraintEnd_toStartOf="@id/spay_pay_by_parts_only_btn"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/spay_pay_with_bonuses"
@@ -115,12 +161,12 @@
         android:text="Обновленная оплата"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/spay_pay_btn"
+        app:layout_constraintStart_toEndOf="@id/spay_pay_with_bank_invoice_id"
         app:layout_constraintTop_toBottomOf="@id/spay_pay_by_parts_only_btn"
         app:layout_constraintVertical_chainStyle="packed" />
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/spay_pay_btn"
+        android:id="@+id/spay_pay_with_bank_invoice_id"
         style="@style/SPayStyle"
         android:text="Оплатить SberPay"
         app:layout_constraintBottom_toBottomOf="parent"
