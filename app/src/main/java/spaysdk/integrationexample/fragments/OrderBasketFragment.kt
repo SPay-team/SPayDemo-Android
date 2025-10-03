@@ -1,6 +1,7 @@
 package spaysdk.integrationexample.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +16,12 @@ import spay.sdk.api.SdkReadyCheckResult
 import spay.sdk.api.model.SPaymentRequest
 import spaysdk.integrationexample.BuildConfig
 import spaysdk.integrationexample.databinding.FragmentOrderBasketBinding
+
+/**
+ * Терминология:
+ *
+ * НМТ - номер мобильного телефона
+ */
 
 class OrderBasketFragment : Fragment() {
 
@@ -35,18 +42,24 @@ class OrderBasketFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         /**
-         * Проверка готовности работы с SPaySdk. Метод возвращает true при условии, что во время инициализации
-         * SPaySdk успела получить конфиг и на устройстве установлен СБОЛ
+         * Проверка готовности работы с SPaySdk. Метод возвращает SdkReadyCheckResult.Ready при условии,
+         * что все внутренние компоненты SPaySdk готовы для работы
+         *
+         * Если что-то пошло не так - вернется SdkReadyCheckResult.NotReady с описанием ошибки
          */
         SPaySdkApp.getInstance().isReadyForSPaySdk(requireContext(), {
             isReadyForSPaySdk = it is SdkReadyCheckResult.Ready
+
+            if (it is SdkReadyCheckResult.NotReady) {
+                Log.e("SPaySdk", "isReadyForSPaySdk: ${it.cause}")
+            }
         })
 
         binding.apply {
 
             /**
-             * Кнопка для работы с SPaySdk должна быть отображена только в том случае, если метод [isReadyForSPaySdk]
-             * вернул true, в противном случае отображать кнопку и взаимодействовать с SPaySdk запрещено. Это может
+             * Кнопка для работы с SPaySdk должна быть отображена только в том случае, если метод [isReadyForSPaySdk] –
+             * true, в противном случае отображать кнопку и взаимодействовать с SPaySdk запрещено. Это может
              * быть чревато нестабильной работой библиотеки, а также потенциальными крашами
              *
              * !!!ВАЖНО!!!
@@ -67,11 +80,15 @@ class OrderBasketFragment : Fragment() {
             /**
              * По нажатию на кнопку необходимо вызвать метод для запуска сценария оплаты SPaySdk
              *
-             * Номер мобильного телефона [PHONE_NUMBER] является необязательным параметром.
-             * Может быть использован во всех сценариях, кроме оплаты по связке
+             * !!!ВАЖНО!!!
              *
-             * Если он был передан -  последним способом авторизации будет НМТ,
-             * если нет, то авторизация по НМТ будет выключена
+             * Во всех способах оплаты, кроме оплаты по НМТ и оплаты связкой, параметр [phoneNumber] является не обязательным
+             * и может быть изменен вручную пользователем, если он попадет на данный способ авторизации
+             *
+             * При оплате по НМТ параметр [phoneNumber] является ОБЯЗАТЕЛЬНЫМ и НЕ может быть
+             * изменен пользователем в процессе оплаты
+             *
+             * При оплате связкой авторизация по НМТ не доступна!
              */
             spayPayWithBankInvoiceId.setOnClickListener {
                 SPaySdkApp.getInstance().pay(
