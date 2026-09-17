@@ -51,7 +51,7 @@ class OrderBasketFragment : Fragment() {
             isReadyForSPaySdk = it is SdkReadyCheckResult.Ready
 
             if (it is SdkReadyCheckResult.NotReady) {
-                Log.e("SPaySdk", "isReadyForSPaySdk: ${it.cause}")
+                Log.i("SPaySdk", "isReadyForSPaySdk: ${it.cause}")
             }
         })
 
@@ -173,23 +173,7 @@ class OrderBasketFragment : Fragment() {
 
             spayPayWithPaymentMethods.setOnClickListener {
                 SPaySdkApp.getInstance().pay(
-                    method = SPayMethod.WithPaymentAccount,
-                    request = SPaymentRequest(
-                        context = requireContext(),
-                        apiKey = getApiKey(),
-                        merchantLogin = getMerchantLogin(),
-                        bankInvoiceId = getBankInvoiceId(),
-                        orderNumber = getOrderNumber(),
-                        appPackage = APP_PACKAGE,
-                    ) { paymentResult ->
-                        processPaymentResult(paymentResult = paymentResult)
-                    }
-                )
-            }
-
-            spayPayWithBinding.setOnClickListener {
-                SPaySdkApp.getInstance().pay(
-                    method = SPayMethod.WithBinding(getBindingId()),
+                    method = SPayMethod.BindingPayment(getBindingId()),
                     request = SPaymentRequest(
                         context = requireContext(),
                         apiKey = getApiKey(),
@@ -205,7 +189,7 @@ class OrderBasketFragment : Fragment() {
 
             spayPayWithNmt.setOnClickListener {
                 SPaySdkApp.getInstance().pay(
-                    method = SPayMethod.WithPhoneNumber,
+                    method = SPayMethod.WithPhoneNumber(),
                     request = SPaymentRequest(
                         context = requireContext(),
                         apiKey = getApiKey(),
@@ -267,7 +251,7 @@ class OrderBasketFragment : Fragment() {
             }
             /** Не все, либо некорректные данные были переданы при попытке оплаты */
             is MerchantError.RequiredDataNotSent -> {
-                makeSnackbar(merchantError.description)
+                makeSnackbar(merchantError.description ?: "No error message")
             }
             /** Ошибка при работе с API банка */
             is MerchantError.SPayApiError -> {
@@ -315,7 +299,7 @@ class OrderBasketFragment : Fragment() {
 
     //
     //
-    // -------------------- Данные для заполнения при тестировании --------------------
+    // -------------------- Данные для заполнения при тестировании интеграционного процесса --------------------
     //
     //
 
