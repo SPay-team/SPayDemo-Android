@@ -21,17 +21,15 @@ dependencyResolutionManagement {
         mavenCentral()
 
         /**
-         * Интеграция используя maven
-         *
-         * Поместите сюда креды которые вам были выданы в пригласительном письме для доступа к maven репозиторию
+         * Транзитивные репозитории для работы с SDK
          */
         maven {
-            name = localProperties.getProperty("name")
-            url = uri(localProperties.getProperty("url"))
-            credentials {
-                username = localProperties.getProperty("username")
-                password = localProperties.getProperty("password")
-            }
+            name = "gitverse"
+            url = uri("https://gitverse.ru/api/packages/clickstream/maven")
+        }
+        maven {
+            name = "HMS"
+            url = uri("https://developer.huawei.com/repo/")
         }
     }
 }
